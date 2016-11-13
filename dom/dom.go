@@ -42,7 +42,7 @@ func NewDocument(style string) (doc *Document) {
 		subscribers: make(map[chan<- string]struct{}),
 
 		initStmt: `document.getElementsByTagName("html")[0].innerHTML = "<head><style></style></head><body></body>";
-			document.head.getElementsByTagName("style")[0].innerText = ` + marshal(style) + `;`,
+			document.head.getElementsByTagName("style")[0].innerHTML = ` + marshal(style) + `;`,
 	}
 
 	doc.Body = &Element{
