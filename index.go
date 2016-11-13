@@ -11,7 +11,11 @@ var indexHTML = []byte(`<!DOCTYPE html>
 
     window.webs = {
         send: function(msg) {
-	    ws.send(msg);
+	    try {
+		ws.send(msg);
+	    } catch (e) {
+		alert(e);
+	    }
         }
     };
 
