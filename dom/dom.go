@@ -59,9 +59,10 @@ func (doc *Document) serve() {
 	for {
 		select {
 		case mod := <-doc.mods:
-			stmt := mod()
-			for subscriber := range doc.subscribers {
-				subscriber <- stmt
+			if stmt := mod(); stmt != "" {
+				for subscriber := range doc.subscribers {
+					subscriber <- stmt
+				}
 			}
 
 		case req := <-doc.requests:
@@ -204,11 +205,14 @@ func (e *Element) SetFunction(name string, jsCode string) {
 
 func (e *Element) set(name, jsValue string) {
 	suffix := `.` + name + `=` + jsValue + `;`
-	e.doc.mods <- func() string {
+	e.doc.mods <- func() (stmt string) {
 		if e.props == nil {
 			e.props = make(map[string]string)
 		}
 		e.props[name] = suffix
-		return e.getExpr() + suffix
+		if e.parent != nil {
+			stmt = e.getExpr() + suffix
+		}
+		return
 	}
 }
